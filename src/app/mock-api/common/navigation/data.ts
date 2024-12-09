@@ -7,42 +7,65 @@ export const defaultNavigation: FuseNavigationItem[] = [
         title: 'Panel',
         type : 'basic',
         icon : 'heroicons_outline:chart-pie',
-        link : '/example'
+        link : '/example',
+        roles: ['administrador', 'validador', 'natural']
+    },
+    {
+        id   : 'resumen',
+        title: 'Registro',
+        type : 'basic',
+        icon : 'heroicons_outline:clipboard-document-list',
+        link : '/resumen',
+        roles: ['administrador', 'natural']
     },
     {
         id   : 'caracterization',
         title: 'Caracterización',
         type : 'basic',
         icon : 'heroicons_outline:newspaper',
-        link : '/caracterization'
+        link : '/caracterization',
+        roles: ['administrador', 'validador']
+
     },
     {
         id   : 'catalog',
         title: 'Catalogar',
         type : 'basic',
         icon : 'heroicons_outline:document-duplicate',
-        link : '/catalog'
+        link : '/catalog',
+        roles: ['administrador']
     },
     {
         id   : 'assessment',
         title: 'Evaluación',
         type : 'basic',
         icon : 'heroicons_outline:queue-list',
-        link : '/assessment'
+        link : '/assessment',
+        roles: ['administrador']
     },
     {
         id   : 'follow',
         title: 'Seguimiento',
         type : 'basic',
         icon : 'heroicons_outline:presentation-chart-line',
-        link : '/follow'
+        link : '/follow',
+        roles: ['administrador']
     },
     {
         id   : 'publication',
         title: 'Publicación',
         type : 'basic',
         icon : 'heroicons_outline:megaphone',
-        link : '/publication'
+        link : '/publication',
+        roles: ['administrador']
+    },
+    {
+        id   : 'inbox',
+        title: 'Inbox',
+        type : 'basic',
+        icon : 'heroicons_outline:inbox',
+        link : '/inbox',
+        roles: ['administrador']
     }
 ];
 export const compactNavigation: FuseNavigationItem[] = [
@@ -51,7 +74,7 @@ export const compactNavigation: FuseNavigationItem[] = [
         title: 'Example',
         type : 'basic',
         icon : 'heroicons_outline:chart-pie',
-        link : '/example'
+        link : '/example',
     }
 ];
 export const futuristicNavigation: FuseNavigationItem[] = [
