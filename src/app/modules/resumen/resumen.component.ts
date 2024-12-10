@@ -5,7 +5,7 @@ import {
     UntypedFormBuilder,
     UntypedFormGroup,
     Validators,
-    FormBuilder,
+    FormBuilder, 
     FormGroup
 } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -20,9 +20,8 @@ import { MatStepperModule } from '@angular/material/stepper';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { CommonModule } from '@angular/common';
-import { ResumenService } from './resumen.service';
+import { ResumenService } from './resumen.service'; 
 import Swal from 'sweetalert2';
-
 
 @Component({
     selector: 'resumen',
@@ -50,10 +49,10 @@ import Swal from 'sweetalert2';
 })
 export class ResumenComponent implements OnInit {
     horizontalStepperForm: UntypedFormGroup;
-    selectedFile: File | null = null;
+    selectedFiles: File[] = [];
     isLoading: boolean = true;
 
-    constructor(private _formBuilder: UntypedFormBuilder,
+    constructor(private _formBuilder: UntypedFormBuilder, 
         private resumenService: ResumenService) {}
 
     triggerFileInput(): void {
@@ -61,16 +60,16 @@ export class ResumenComponent implements OnInit {
         fileInput?.click();
       }
 
-      onFileSelected(event: Event): void {
+      onFilesSelected(event: Event): void {
         const input = event.target as HTMLInputElement;
-        if (input?.files?.length) {
-            this.selectedFile = input.files[0];
-            console.log('Archivo seleccionado:', this.selectedFile);
+        if (input.files) {
+          this.selectedFiles = Array.from(input.files);
+          console.log('Archivo seleccionado:', this.selectedFiles);
         } else {
             console.log('No se seleccionó ningún archivo.');
         }
-    }
-
+    }    
+    
     submitForm(): void {
         if (this.horizontalStepperForm.valid) {
           // Definir los campos multiseleccionables
@@ -81,10 +80,10 @@ export class ResumenComponent implements OnInit {
             'taxonomiaEvento',
             'tipoMaterialProducido',
           ];
-
+      
           // Obtener los valores del formulario
           const formValues = this.horizontalStepperForm.getRawValue();
-
+      
           // Transformar los campos multiseleccionables en cadenas separadas por comas
           multiSelectFields.forEach((field) => {
             Object.keys(formValues).forEach((step) => {
@@ -97,10 +96,10 @@ export class ResumenComponent implements OnInit {
               }
             });
           });
-
+      
           // Aplana el objeto si es necesario y envía los datos
           const flattenedValues = this.flattenObject(formValues);
-
+      
           this.resumenService.sendFormDataAsJson(flattenedValues).subscribe(
             (response) => {
               // Mostrar alerta de éxito usando SweetAlert2
@@ -111,7 +110,7 @@ export class ResumenComponent implements OnInit {
                 confirmButtonText: 'Aceptar',
               }).then(() => {
                 // Redirigir a otra página o vista después de un segundo
-                window.location.href = './example';
+                window.location.href = './example'; 
               });
             },
             (error) => {
@@ -124,13 +123,13 @@ export class ResumenComponent implements OnInit {
               });
             }
           );
-
-
+          
+          
         } else {
           console.warn('Formulario no válido');
         }
-    }
-
+    }      
+      
     ngOnInit(): void {
         this.horizontalStepperForm = this._formBuilder.group({
             step1: this._formBuilder.group({
@@ -164,22 +163,22 @@ export class ResumenComponent implements OnInit {
                 objetivoPrincipalPractica: [''],
             }),
             step4: this._formBuilder.group({
-                impactoEsperado: [''],
-                metodologiaUsada: ['', [Validators.maxLength(500)]],
-                duracionImplementacion: [''],
-                etapasMetodologia: [''],
+                impactoEsperado: [''], 
+                metodologiaUsada: ['', [Validators.maxLength(500)]], 
+                duracionImplementacion: [''], 
+                etapasMetodologia: [''], 
                 periodoDesarrolloInicio: [''],
                 periodoDesarrolloFin: [''],
             }),
             step5: this._formBuilder.group({
-                tipoMaterialProducido: [''],
-                apoyoRecibido: [''],
-                reconocimientosNacionalesInternacionales: [''],
-                objetoControl: [''],
-                taxonomiaEvento: [''],
-                tipoActuacion: [''],
-                descripcionResultados: [''],
-            }),
+                tipoMaterialProducido: [''], 
+                apoyoRecibido: [''], 
+                reconocimientosNacionalesInternacionales: [''], 
+                objetoControl: [''], 
+                taxonomiaEvento: [''], 
+                tipoActuacion: [''], 
+                descripcionResultados: [''], 
+            }),            
             step6: this._formBuilder.group({
               documentoActuacion: [Validators.required],
           }),
@@ -206,18 +205,18 @@ export class ResumenComponent implements OnInit {
         const date = event.value;
         const formattedDate = this.formatDate(date);
         this.horizontalStepperForm.get(`${stepName}.${controlName}`)?.setValue(formattedDate);
-    }
+    }    
 
     formatDate(date: Date): string {
         const year = date.getFullYear();
-        const month = ('0' + (date.getMonth() + 1)).slice(-2);
-        const day = ('0' + date.getDate()).slice(-2);
+        const month = ('0' + (date.getMonth() + 1)).slice(-2); 
+        const day = ('0' + date.getDate()).slice(-2); 
         return `${year}-${month}-${day}`;
     }
 
     flattenObject(obj: any): any {
         let result: any = {};
-
+      
         for (const key in obj) {
           if (obj.hasOwnProperty(key)) {
             if (typeof obj[key] === 'object' && obj[key] !== null) {
@@ -237,35 +236,44 @@ export class ResumenComponent implements OnInit {
           }
         }
         return result;
-      }
+      }      
       submitDocumentoActuacion(): void {
-        console.log('Intentando enviar el documento...');
-        if (this.selectedFile) {
-            const formData = new FormData();
-            formData.append('file', this.selectedFile, this.selectedFile.name);
-
-            console.log('FormData construido:', formData.get('file'));
-
-            this.resumenService.uploadFile(formData).subscribe(
-                (response) => {
-                    console.log('Documento enviado con éxito:', response);
-                },
-                (error) => {
-                    console.error('Error al enviar el documento:', error);
-                }
-            );
+        console.log('Intentando enviar los documentos...');
+      
+        if (this.selectedFiles.length > 0) {
+          const formData = new FormData();
+      
+          // Agregamos todos los archivos bajo la misma clave "file"
+          this.selectedFiles.forEach((file) => {
+            formData.append('file', file, file.name);
+          });
+      
+          console.log('FormData construido:', formData);
+      
+          // Enviamos los archivos al servicio
+          this.resumenService.uploadFile(formData).subscribe(
+            (response) => {
+              console.log('Documentos enviados con éxito:', response);
+              // Limpiamos la selección tras el envío exitoso
+              this.selectedFiles = [];
+            },
+            (error) => {
+              console.error('Error al enviar los documentos:', error);
+            }
+          );
         } else {
-            console.warn('No hay archivo seleccionado.');
+          console.warn('No hay archivos seleccionados.');
         }
-    }
+      }      
+      
     onDragOver(event: DragEvent): void {
       event.preventDefault();
     }
 
     onDrop(event: DragEvent): void {
       event.preventDefault();
-      if (event.dataTransfer?.files.length) {
-        this.selectedFile = event.dataTransfer.files[0];
+      if (event.dataTransfer?.files) {
+        this.selectedFiles = Array.from(event.dataTransfer.files);
       }
     }
 }

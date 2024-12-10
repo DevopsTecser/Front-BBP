@@ -5,7 +5,7 @@
 
 
 export const rol = [
-    'administrador',
+    'administrador'
 
 ];
 
