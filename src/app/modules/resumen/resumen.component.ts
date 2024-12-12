@@ -51,11 +51,17 @@ export class ResumenComponent implements OnInit {
     horizontalStepperForm: UntypedFormGroup;
     selectedFiles: File[] = [];
     isLoading: boolean = true;
-     progress: number = 0;
+    progress: number = 0;
+    isModalOpen: boolean = false;
+
 
     constructor(private _formBuilder: UntypedFormBuilder, 
         private resumenService: ResumenService) {}
 
+        toggleModal(): void {
+          this.isModalOpen = !this.isModalOpen;
+      }
+      
     triggerFileInput(): void {
         const fileInput = document.querySelector<HTMLInputElement>('#fileInput');
         fileInput?.click();
