@@ -7,8 +7,8 @@ import { Observable } from 'rxjs';
 })
 export class ResumenService {
 
-  private apiUrl = 'http://192.168.2.19:5500/api/v1/hojadevida/guardar';
-  private uploadUrl = 'http://192.168.2.19:5500/api/v1/hojadevida/cargar-archivo';
+  private apiUrl = 'http://192.168.2.4:5500/api/v1/hojadevida/guardar';
+  private uploadUrl = 'http://192.168.2.4:5500/api/v1/hojadevida/cargar-archivo';
 
   constructor(private http: HttpClient) {}
 
