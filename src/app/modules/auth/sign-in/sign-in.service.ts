@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
     providedIn: 'root',
 })
 export class SignInService {
-    private apiUrl = 'http://192.168.2.19:5500/api/v1/auth/loginActiveDirectory';
+    private apiUrl = 'http://192.168.2.4:5500/api/v1/auth/loginActiveDirectory';
 
     constructor(private http: HttpClient) {}
 

@@ -9,9 +9,19 @@
             Hoja de Vida
         </h2>
     </div>
-    <br>
-    <form [formGroup]="horizontalStepperForm.get('newFields')" class="filters-form" style="display: flex; gap: 16px;">
-        <!-- Campo de texto -->
+<!-- Barra de progreso personalizada -->
+<div class="progress-container">
+    <span class="progress-text">{{ progress }}%</span>
+    <div
+        class="progress-bar"
+        [style.width.%]="progress"
+        [ngClass]="progressColor"
+    ></div>
+
+</div>
+
+  
+    <!-- <form [formGroup]="horizontalStepperForm.get('newFields')" class="filters-form" style="display: flex; gap: 16px;">
         <mat-form-field appearance="fill" class="filters-field rounded-2xl" style="flex: 1;">
             <mat-label>Nombre de la práctica</mat-label>
             <input matInput formControlName="nombrePractica" />
@@ -20,7 +30,6 @@
             </mat-error>
         </mat-form-field>        
     
-        <!-- Select para Identificación -->
         <mat-form-field appearance="fill" class="filters-field rounded-2xl" style="flex: 1;">
             <mat-label>Identificación</mat-label>
             <mat-select formControlName="identificacion">
@@ -33,7 +42,6 @@
             </mat-error>
         </mat-form-field>
     
-        <!-- Select para Contenido -->
         <mat-form-field appearance="fill" class="filters-field rounded-2xl" style="flex: 1;">
             <mat-label>Contenido</mat-label>
             <mat-select formControlName="contenido">
@@ -45,7 +53,7 @@
                 Este campo es obligatorio
             </mat-error>
         </mat-form-field>
-    </form>
+    </form> -->
     
 <div class="max-w-3x">
     <!-- Horizontal stepper -->

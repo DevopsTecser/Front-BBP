@@ -51,6 +51,7 @@ export class ResumenComponent implements OnInit {
     horizontalStepperForm: UntypedFormGroup;
     selectedFiles: File[] = [];
     isLoading: boolean = true;
+     progress: number = 0;
 
     constructor(private _formBuilder: UntypedFormBuilder, 
         private resumenService: ResumenService) {}
@@ -133,30 +134,22 @@ export class ResumenComponent implements OnInit {
     ngOnInit(): void {
         this.horizontalStepperForm = this._formBuilder.group({
             step1: this._formBuilder.group({
-                fechaDiligenciamiento: [''],
-                nombreEntidad: [''],
-                nombreDependenciaArea: [''],
+                fechaDiligenciamiento: ['', new Date()],
+                nombreEntidad: ['', Validators.required],
+                nombreDependenciaArea: ['', Validators.required],
             }),
             step2: this._formBuilder.group({
-                nombre: ['', [Validators.maxLength(50)]],
-                cargo: ['', [Validators.maxLength(50)]],
-                correo: [
-                    '',
-                    [Validators.email],
-                ],
-                contacto: [
-                    '',
-                    [
-                        Validators.pattern('^[0-9]{10}$'),
-                    ],
-                ],
+                nombre: ['', [Validators.required, Validators.maxLength(50)]],
+                cargo: ['', [Validators.required, Validators.maxLength(50)]],
+                correo: ['', [Validators.required, Validators.email]],
+                contacto: ['', [Validators.required, Validators.pattern('^[0-9]{10}$')]],
             }),
             step3: this._formBuilder.group({
                 tipoEstrategiaIdentificacion: [''],
                 tipoPractica: [''],
                 codigoPractica: [{ value: '', disabled: true }],
                 tipologia: [{ value: ''}],
-                estadoFlujo: [{ value: '' }],
+                estadoFlujo: [{ value: 'Candidata', disabled: true }],
                 nivelBuenaPractica: [''],
                 nombreDescriptivoBuenaPractica: ['', Validators.maxLength(100)],
                 propositoPractica: ['', Validators.maxLength(300)],
@@ -183,6 +176,11 @@ export class ResumenComponent implements OnInit {
               documentoActuacion: [Validators.required],
           }),
         });
+        this.horizontalStepperForm.valueChanges.subscribe(() => {
+          this.progress = this.calculateProgress();
+          console.log('Progreso actualizado:', this.progress);
+        });
+        this.progress = this.calculateProgress();
     }
     onPracticaChange(event: any): void {
         const selectedValue = event.value;
@@ -243,7 +241,6 @@ export class ResumenComponent implements OnInit {
         if (this.selectedFiles.length > 0) {
           const formData = new FormData();
       
-          // Agregamos todos los archivos bajo la misma clave "file"
           this.selectedFiles.forEach((file) => {
             formData.append('file', file, file.name);
           });
@@ -276,4 +273,45 @@ export class ResumenComponent implements OnInit {
         this.selectedFiles = Array.from(event.dataTransfer.files);
       }
     }
+    calculateProgress(): number {
+      const formGroups = Object.keys(this.horizontalStepperForm.controls);
+      let totalControls = 0;
+      let filledControls = 0;
+  
+      formGroups.forEach((step) => {
+          const group = this.horizontalStepperForm.get(step) as UntypedFormGroup;
+          if (group) {
+              const controls = group.controls;
+  
+              Object.values(controls).forEach((control) => {
+                  if (!control.disabled) {
+                      totalControls++;
+                      // Considerar válido si tiene un valor (aunque no sea obligatorio)
+                      if (control.value && control.value.toString().trim() !== '') {
+                          filledControls++;
+                      }
+                  }
+              });
+          }
+      });
+  
+      // Evitar dividir por cero
+      if (totalControls === 0) {
+          return 0;
+      }
+  
+      // Calcular progreso
+      const progressValue = Math.round((filledControls / totalControls) * 100);
+      console.log(`Total controles: ${totalControls}, Controles llenos: ${filledControls}, Progreso: ${progressValue}%`);
+      return progressValue;
+  }
+  get progressColor(): string {
+    if (this.progress <= 30) {
+        return 'red'; // 0% - 30%: Rojo
+    } else if (this.progress <= 62) {
+        return 'yellow'; // 31% - 62%: Amarillo
+    } else {
+        return 'green'; // 63% - 100%: Verde
+    }
+}  
 }

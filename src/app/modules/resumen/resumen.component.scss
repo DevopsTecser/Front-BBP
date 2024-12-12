@@ -128,3 +128,43 @@ mat-step {
         }
     }
 }
+.progress-container {
+    display: flex;
+    align-items: center;
+    background-color: #f0f0f0;
+    border-radius: 5px;
+    height: 20px;
+    width: 100%; /* Asegura que no se desborde del contenedor */
+    margin: 10px 0;
+    position: relative;
+    overflow: hidden; /* Previene que elementos internos se salgan del contenedor */
+}
+
+.progress-bar {
+    height: 100%;
+    transition: width 0.3s ease, background-color 0.3s ease;
+    border-radius: 5px 0 0 5px;
+
+    &.red {
+        background-color: #ff4d4d; /* Rojo */
+    }
+
+    &.yellow {
+        background-color: #ffcc00; /* Amarillo */
+    }
+
+    &.green {
+        background-color: #4caf50; /* Verde */
+    }
+}
+
+.progress-text {
+    position: absolute;
+    right: 10px; /* Colócalo justo al borde derecho del contenedor */
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 14px;
+    font-weight: bold;
+    color: #000;
+    white-space: nowrap; /* Evita saltos de línea */
+}
