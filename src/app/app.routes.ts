@@ -3,6 +3,8 @@ import { initialDataResolver } from 'app/app.resolvers';
 import { AuthGuard } from 'app/core/auth/guards/auth.guard';
 import { NoAuthGuard } from 'app/core/auth/guards/noAuth.guard';
 import { LayoutComponent } from 'app/layout/layout.component';
+import { CharacterizationComponent } from 'app/modules/optionsDropdown/characterization/characterization.component';
+
 
 // @formatter:off
 /* eslint-disable max-len */
@@ -57,7 +59,11 @@ export const appRoutes: Route[] = [
         path: '',
         component: LayoutComponent,
         data: {
-            layout: 'empty'
+            layout: 'empty',
+            roles: [
+                'admin',
+                'consultor'
+            ]
         },
         children: [
             {path: 'home', loadChildren: () => import('app/modules/landing/home/home.routes')},
@@ -74,7 +80,10 @@ export const appRoutes: Route[] = [
             initialData: initialDataResolver
         },
         children: [
-            {path: 'example', loadChildren: () => import('app/modules/admin/example/example.routes')},
+            {path: 'example', loadChildren: () =>
+                import('app/modules/admin/example/example.routes'),
+                data: { requiredRoles: ['validador','administrador', 'natural'], module: '' }
+            },
         ]
     },
 
@@ -88,7 +97,10 @@ export const appRoutes: Route[] = [
             initialData: initialDataResolver
         },
         children: [
-            {path: 'caracterization', loadChildren: () => import('app/modules/caracterization/caracterization.routes')},
+            {path: 'caracterization', loadChildren: () =>
+                import('app/modules/caracterization/caracterization.routes'),
+                data: { requiredRoles: ['validador','administrador'], module: '' }
+            },
         ]
     },
     // Catalog  routes
@@ -101,7 +113,10 @@ export const appRoutes: Route[] = [
             initialData: initialDataResolver
         },
         children: [
-            {path: 'catalog', loadChildren: () => import('app/modules/catalog/catalog.routes')},
+            {path: 'catalog', loadChildren: () =>
+                import('app/modules/catalog/catalog.routes'),
+                data: { requiredRoles: ['administrador'], module: '' }
+            },
         ]
     },
     {
@@ -113,7 +128,10 @@ export const appRoutes: Route[] = [
             initialData: initialDataResolver
         },
         children: [
-            {path: 'assessment', loadChildren: () => import('app/modules/assessment/assessment.routes')},
+            {path: 'assessment', loadChildren: () =>
+                import('app/modules/assessment/assessment.routes'),
+                data: { requiredRoles: ['administrador'], module: '' }
+            },
         ]
     },
     {
@@ -125,7 +143,10 @@ export const appRoutes: Route[] = [
             initialData: initialDataResolver
         },
         children: [
-            {path: 'follow', loadChildren: () => import('app/modules/follow/follow.routes')},
+            {path: 'follow', loadChildren: () =>
+                import('app/modules/follow/follow.routes'),
+                data: { requiredRoles: ['administrador'], module: '' }
+            },
         ]
     },
     {
@@ -137,7 +158,67 @@ export const appRoutes: Route[] = [
             initialData: initialDataResolver
         },
         children: [
-            {path: 'publication', loadChildren: () => import('app/modules/publication/publication.routes')},
+            {path: 'publication', loadChildren: () =>
+                import('app/modules/publication/publication.routes'),
+                data: { requiredRoles: ['administrador'], module: '' }
+            },
+        ]
+    },
+    // Resumen common routes
+    {
+        path: '',
+        canActivate: [AuthGuard],
+        canActivateChild: [AuthGuard],
+        component: LayoutComponent,
+        resolve: {
+            initialData: initialDataResolver
+        },
+        children: [
+            {path: 'resumen', loadChildren: () =>
+                import('app/modules/resumen/resumen.routes'),
+                data: { requiredRoles: ['administrador', 'natural'], module: '' }
+            },
+        ]
+    },
+    {
+        path: '',
+        canActivate: [AuthGuard],
+        canActivateChild: [AuthGuard],
+        component: LayoutComponent,
+        resolve: {
+            initialData: initialDataResolver
+        },
+        children: [
+            {path: 'inbox', loadChildren: () =>
+                import('app/modules/inbox/inbox.routes'),
+                data: { requiredRoles: ['administrador'], module: '' }
+            },
+        ]
+    },
+    {
+        path: '',
+        canActivate: [AuthGuard],
+        canActivateChild: [AuthGuard],
+        component: LayoutComponent,
+        resolve: {
+            initialData: initialDataResolver
+        },
+        children: [
+            {path: 'optionsDropdown/characterization', loadChildren: () => import('app/modules/optionsDropdown/characterization/characterization.routes')},
+        ]
+    },
+        {
+        path: 'options',
+        canActivate: [AuthGuard],
+        canActivateChild: [AuthGuard],
+        component: LayoutComponent,
+        resolve: {
+            initialData: initialDataResolver
+        },
+        children: [
+            {path: 'characterization', loadChildren: () => import('app/modules/optionsDropdown/characterization/characterization.routes')},
+            // {path: 'characterization', loadChildren: () => import('app/modules/optionsDropdown/characterization/characterization.routes')},
+
         ]
     }
 ];

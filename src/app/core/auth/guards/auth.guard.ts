@@ -5,9 +5,11 @@ import { of, switchMap } from 'rxjs';
 
 export const AuthGuard: CanActivateFn | CanActivateChildFn = (route, state) => {
     const router: Router = inject(Router);
+    const requiredRoles: string[] = route.data['requiredRoles'] || [];
+    const authService: AuthService = inject(AuthService);
 
     // Check the authentication status
-    return inject(AuthService)
+    return authService
         .check()
         .pipe(
             switchMap((authenticated) => {
@@ -23,6 +25,25 @@ export const AuthGuard: CanActivateFn | CanActivateChildFn = (route, state) => {
                     return of(urlTree);
                 }
 
+
+                if (requiredRoles.length > 0) {
+                    const userRoles: string[] = authService.accessRoles; // Recupera los roles del usuario
+                    console.log(requiredRoles);
+                    const hasRequiredRole = requiredRoles.some((role) =>
+                        userRoles.includes(role)
+                    );
+
+                    if (!hasRequiredRole) {
+                        // Redirige a una página de acceso denegado si no tiene roles necesarios
+                        const redirectURL =
+                            state.url === '/sign-out'
+                                ? ''
+                                : `redirectURL=${state.url}`;
+                        const urlTree = router.parseUrl(`sign-in?${redirectURL}`);
+
+                        return of(urlTree);
+                    }
+                }
                 // Allow the access
                 return of(true);
             })

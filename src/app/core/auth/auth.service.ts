@@ -2,13 +2,33 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { AuthUtils } from 'app/core/auth/auth.utils';
 import { UserService } from 'app/core/user/user.service';
-import { catchError, Observable, of, switchMap, throwError } from 'rxjs';
+import { catchError, map, Observable, of, ReplaySubject, switchMap, tap, throwError } from 'rxjs';
+import { user as userData } from 'app/mock-api/common/user/data';
+import { Rol } from '../user/rol.types';
+
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
     private _authenticated: boolean = false;
     private _httpClient = inject(HttpClient);
     private _userService = inject(UserService);
+
+    private _user: any = userData;
+    private _roles: ReplaySubject<Rol[]> = new ReplaySubject<Rol[]>(1);
+
+    /**
+     * Setter & getter for ROL
+     *
+     * @param value
+     */
+    set roles(value: Rol[]) {
+        // Store the value
+        this._roles.next(value);
+    }
+
+    get roles$(): Observable<Rol[]> {
+        return this._roles.asObservable();
+    }
 
     // -----------------------------------------------------------------------------------------------------
     // @ Accessors
@@ -23,6 +43,20 @@ export class AuthService {
 
     get accessToken(): string {
         return localStorage.getItem('accessToken') ?? '';
+    }
+
+    /**
+     * Setter & getter for access token
+     */
+    set accessRoles(roles: any[]) {
+        // Convierte el arreglo a JSON antes de almacenarlo
+        localStorage.setItem('accessRoles', JSON.stringify(roles));
+    }
+
+    get accessRoles(): any[] {
+        // Recupera el valor y lo convierte de JSON a un arreglo
+        const roles = localStorage.getItem('accessRoles');
+        return roles ? JSON.parse(roles) : [];
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -47,30 +81,88 @@ export class AuthService {
         return this._httpClient.post('api/auth/reset-password', password);
     }
 
+    getRoles(): Observable<Rol[]> {
+        return this._httpClient.get<Rol[]>('api/common/roles').pipe(
+            tap((rol) => {
+                this._roles.next(rol);
+            })
+        );
+    }
+
+    getRolesDos(): Observable<Rol[]> {
+        return this._httpClient.get<Rol[]>('api/common/rolesdos').pipe(
+            tap((rol) => {
+                this._roles.next(rol);
+            })
+        );
+    }
+
+
     /**
      * Sign in
      *
      * @param credentials
      */
-    signIn(credentials: { email: string; password: string }): Observable<any> {
+    signIn(credentials: { sAMAccountName: string; password: string }): Observable<any> {
         // Throw error, if the user is already logged in
         if (this._authenticated) {
             return throwError('User is already logged in.');
+
         }
 
-        return this._httpClient.post('api/auth/sign-in', credentials).pipe(
+        const auth = {
+            sAMAccountName: credentials.sAMAccountName,
+            password: credentials.password,
+        };
+
+        return this._httpClient.post('http://192.168.2.4:5500/api/v1/auth/loginActiveDirectory', auth).pipe(
             switchMap((response: any) => {
+                console.log(response);
+
                 // Store the access token in the local storage
-                this.accessToken = response.accessToken;
+                this.accessToken = response.user.token;
 
                 // Set the authenticated flag to true
                 this._authenticated = true;
 
                 // Store the user on the user service
-                this._userService.user = response.user;
+                this._userService.user = this._user;
+
+
+                if(auth.sAMAccountName == 'bbp.cgr') {
+
+                    return this.getRoles().pipe(
+                        map((roles) => {
+                            console.log(roles);
+
+                            this.accessRoles = roles;
+                            // Devuelve un objeto que contiene el token y los roles
+                            return {
+                                token: response.user.token,
+                                roles: roles,
+                            };
+                        })
+                    );
+                }
+
+                if(auth.sAMAccountName == 'user2') {
+
+                    return this.getRolesDos().pipe(
+                        map((roles) => {
+                            console.log(roles);
+
+                            this.accessRoles = roles;
+                            // Devuelve un objeto que contiene el token y los roles
+                            return {
+                                token: response.user.token,
+                                roles: roles,
+                            };
+                        })
+                    );
+                }
 
                 // Return a new observable with the response
-                return of(response);
+                // return of(response);
             })
         );
     }
