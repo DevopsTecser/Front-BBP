@@ -1,3 +1,4 @@
+import { user } from './../../mock-api/common/user/data';
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { AuthUtils } from 'app/core/auth/auth.utils';
@@ -128,41 +129,46 @@ export class AuthService {
                 // Store the user on the user service
                 this._userService.user = this._user;
 
+                const listCargo = [];
+                listCargo.push(response.user.cargo);
 
-                if(auth.sAMAccountName == 'bbp.cgr') {
+                this._roles.next(listCargo);
+                this.accessRoles = listCargo;
 
-                    return this.getRoles().pipe(
-                        map((roles) => {
-                            console.log(roles);
+                // if(auth.sAMAccountName == 'bbp.cgr') {
 
-                            this.accessRoles = roles;
-                            // Devuelve un objeto que contiene el token y los roles
-                            return {
-                                token: response.user.token,
-                                roles: roles,
-                            };
-                        })
-                    );
-                }
+                //     return this.getRoles().pipe(
+                //         map((roles) => {
+                //             console.log(roles);
 
-                if(auth.sAMAccountName == 'user2') {
+                //             this.accessRoles = roles;
+                //             // Devuelve un objeto que contiene el token y los roles
+                //             return {
+                //                 token: response.user.token,
+                //                 roles: roles,
+                //             };
+                //         })
+                //     );
+                // }
 
-                    return this.getRolesDos().pipe(
-                        map((roles) => {
-                            console.log(roles);
+                // if(auth.sAMAccountName == 'user2') {
 
-                            this.accessRoles = roles;
-                            // Devuelve un objeto que contiene el token y los roles
-                            return {
-                                token: response.user.token,
-                                roles: roles,
-                            };
-                        })
-                    );
-                }
+                //     return this.getRolesDos().pipe(
+                //         map((roles) => {
+                //             console.log(roles);
+
+                //             this.accessRoles = roles;
+                //             // Devuelve un objeto que contiene el token y los roles
+                //             return {
+                //                 token: response.user.token,
+                //                 roles: roles,
+                //             };
+                //         })
+                //     );
+                // }
 
                 // Return a new observable with the response
-                // return of(response);
+                return of(response);
             })
         );
     }
