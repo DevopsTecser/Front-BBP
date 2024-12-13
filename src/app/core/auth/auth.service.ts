@@ -1,3 +1,4 @@
+import { user } from './../../mock-api/common/user/data';
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { AuthUtils } from 'app/core/auth/auth.utils';
@@ -5,7 +6,11 @@ import { UserService } from 'app/core/user/user.service';
 import { catchError, map, Observable, of, ReplaySubject, switchMap, tap, throwError } from 'rxjs';
 import { user as userData } from 'app/mock-api/common/user/data';
 import { Rol } from '../user/rol.types';
+
 import { GlobalConstants } from '../constants/GlobalConstants';
+
+import { CONFIG } from '../../config/config';
+
 
 
 @Injectable({ providedIn: 'root' })
@@ -116,7 +121,11 @@ export class AuthService {
             password: credentials.password,
         };
 
-        return this._httpClient.post(`${GlobalConstants.API_BASE_URL}auth/loginActiveDirectory`, auth).pipe(
+
+        // return this._httpClient.post(`${GlobalConstants.API_BASE_URL}auth/loginActiveDirectory`, auth).pipe(
+
+        return this._httpClient.post(`${CONFIG.apiHost}/api/v1/auth/loginActiveDirectory`, auth).pipe(
+
             switchMap((response: any) => {
                 console.log(response);
 
@@ -129,41 +138,46 @@ export class AuthService {
                 // Store the user on the user service
                 this._userService.user = this._user;
 
+                const listCargo = [];
+                listCargo.push(response.user.cargo);
 
-                if(auth.sAMAccountName == 'bbp.cgr') {
+                this._roles.next(listCargo);
+                this.accessRoles = listCargo;
 
-                    return this.getRoles().pipe(
-                        map((roles) => {
-                            console.log(roles);
+                // if(auth.sAMAccountName == 'bbp.cgr') {
 
-                            this.accessRoles = roles;
-                            // Devuelve un objeto que contiene el token y los roles
-                            return {
-                                token: response.user.token,
-                                roles: roles,
-                            };
-                        })
-                    );
-                }
+                //     return this.getRoles().pipe(
+                //         map((roles) => {
+                //             console.log(roles);
 
-                if(auth.sAMAccountName == 'user2') {
+                //             this.accessRoles = roles;
+                //             // Devuelve un objeto que contiene el token y los roles
+                //             return {
+                //                 token: response.user.token,
+                //                 roles: roles,
+                //             };
+                //         })
+                //     );
+                // }
 
-                    return this.getRolesDos().pipe(
-                        map((roles) => {
-                            console.log(roles);
+                // if(auth.sAMAccountName == 'user2') {
 
-                            this.accessRoles = roles;
-                            // Devuelve un objeto que contiene el token y los roles
-                            return {
-                                token: response.user.token,
-                                roles: roles,
-                            };
-                        })
-                    );
-                }
+                //     return this.getRolesDos().pipe(
+                //         map((roles) => {
+                //             console.log(roles);
+
+                //             this.accessRoles = roles;
+                //             // Devuelve un objeto que contiene el token y los roles
+                //             return {
+                //                 token: response.user.token,
+                //                 roles: roles,
+                //             };
+                //         })
+                //     );
+                // }
 
                 // Return a new observable with the response
-                // return of(response);
+                return of(response);
             })
         );
     }
