@@ -190,7 +190,7 @@ export const appRoutes: Route[] = [
         },
         children: [
             {path: 'inbox', loadChildren: () =>
-                import('app/modules/inbox/inbox.routes'),
+                import('app/modules/common/inbox/inbox.routes'),
                 data: { requiredRoles: ['administrador'], module: '' }
             },
         ]
