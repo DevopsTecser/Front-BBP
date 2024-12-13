@@ -220,5 +220,21 @@ export const appRoutes: Route[] = [
             // {path: 'characterization', loadChildren: () => import('app/modules/optionsDropdown/characterization/characterization.routes')},
 
         ]
+    },
+    // create routes
+    {
+        path: '',
+        canActivate: [AuthGuard],
+        canActivateChild: [AuthGuard],
+        component: LayoutComponent,
+        resolve: {
+            initialData: initialDataResolver
+        },
+        children: [
+            {path: 'create', loadChildren: () =>
+                import('app/modules/create/create.routes'),
+                data: { requiredRoles: ['validador','administrador'], module: '' }
+            },
+        ]
     }
 ];
