@@ -6,6 +6,7 @@ import { UserService } from 'app/core/user/user.service';
 import { catchError, map, Observable, of, ReplaySubject, switchMap, tap, throwError } from 'rxjs';
 import { user as userData } from 'app/mock-api/common/user/data';
 import { Rol } from '../user/rol.types';
+import { CONFIG } from '../../config/config';
 
 
 @Injectable({ providedIn: 'root' })
@@ -116,7 +117,8 @@ export class AuthService {
             password: credentials.password,
         };
 
-        return this._httpClient.post('http://192.168.2.4:5500/api/v1/auth/loginActiveDirectory', auth).pipe(
+        return this._httpClient.post(`${CONFIG.apiHost}/api/v1/auth/loginActiveDirectory`, auth).pipe(
+
             switchMap((response: any) => {
                 console.log(response);
 
