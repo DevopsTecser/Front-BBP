@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { User } from 'app/core/user/user.types';
 import { map, Observable, ReplaySubject, tap } from 'rxjs';
+import { Rol } from './rol.types';
 
 @Injectable({ providedIn: 'root' })
 export class UserService {
@@ -25,6 +26,7 @@ export class UserService {
     get user$(): Observable<User> {
         return this._user.asObservable();
     }
+
 
     // -----------------------------------------------------------------------------------------------------
     // @ Public methods
